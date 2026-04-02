@@ -105,7 +105,8 @@ if __name__ == "__main__":
         "--output-dir",
         "-o",
         type=str,
-        help="path for processed dataset (default: ../datasets/tartan_drive/)",
+        default="./datasets_tartan_drive/",
+        help="path for processed dataset (default: /datasets_tartan_drive/)",
         required=True,
     )
     # number of trajs to process
