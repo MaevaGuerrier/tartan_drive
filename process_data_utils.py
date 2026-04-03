@@ -5,7 +5,6 @@ import rosbag
 from PIL import Image
 import cv2
 from typing import Any, Tuple, List, Dict
-import torchvision.transforms.functional as TF
 
 IMAGE_SIZE = (160, 120)
 IMAGE_ASPECT_RATIO = 4 / 3
@@ -34,45 +33,6 @@ def process_tartan_img(msg) -> Image:
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     img = Image.fromarray(img)
     return img
-
-
-def process_locobot_img(msg) -> Image:
-    """
-    Process image data from a topic that publishes sensor_msgs/Image to a PIL image for the locobot dataset
-    """
-    img = np.frombuffer(msg.data, dtype=np.uint8).reshape(
-        msg.height, msg.width, -1)
-    pil_image = Image.fromarray(img)
-    return pil_image
-
-
-def process_scand_img(msg) -> Image:
-    """
-    Process image data from a topic that publishes sensor_msgs/CompressedImage to a PIL image for the scand dataset
-    """
-    # convert sensor_msgs/CompressedImage to PIL image
-    img = Image.open(io.BytesIO(msg.data))
-    # center crop image to 4:3 aspect ratio
-    w, h = img.size
-    img = TF.center_crop(
-        img, (h, int(h * IMAGE_ASPECT_RATIO))
-    )  # crop to the right ratio
-    # resize image to IMAGE_SIZE
-    img = img.resize(IMAGE_SIZE)
-    return img
-
-
-############## Add custom image processing functions here #############
-
-def process_sacson_img(msg) -> Image:
-    np_arr = np.fromstring(msg.data, np.uint8)
-    image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-    image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-    pil_image = Image.fromarray(image_np)
-    return pil_image
-
-
-#######################################################################
 
 
 def process_odom(
